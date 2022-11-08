@@ -55,10 +55,17 @@ export default function Home() {
         <h2 className='text-xl text-red-600 my-4'>必选</h2>
         {mustHaveTags.map((item, index) => (
           <div key={index}>
-            <input value={item.zh} data-tags-en={item.en} type='checkbox' onChange={handleCheck} />
-            <span>
-              {item.zh} / {item.en}
-            </span>
+            <label>
+              <input
+                value={item.zh}
+                data-tags-en={item.en}
+                type='checkbox'
+                onChange={handleCheck}
+              />
+              <span>
+                {item.zh} / {item.en}
+              </span>
+            </label>
           </div>
         ))}
         <h2 className='text-xl text-red-600 my-4'>商业装修相关</h2>
