@@ -1,38 +1,18 @@
 import { useState } from 'react'
+import { tagsDB, mustHaveTags } from './jycTagsDB'
 export default function Home() {
-  const tagsDB = [
-    {
-      zh: '商业装修设计',
-      en: 'Commercial Renovation Design',
-    },
-  ]
-  const mustHaveTags = [
-    {
-      zh: 'JYC',
-      en: 'JYC',
-    },
-    {
-      zh: '匠垣建设',
-      en: 'JY Construction',
-    },
-    {
-      zh: '匠垣设计',
-      en: 'JY Construction Design',
-    },
-  ]
   const [checked, setChecked] = useState([])
   const [checkedEN, setCheckedEN] = useState([])
-
   // Add/Remove checked item from list
-  const handleCheck = (event) => {
-    var updatedList = [...checked]
+  const handleCheck = (e) => {
+    let updatedList = [...checked]
     let tagsListEN = [...checkedEN]
-    if (event.target.checked) {
-      updatedList = [...checked, event.target.value]
-      tagsListEN = [...checkedEN, event.target.getAttribute('data-tags-en')]
+    if (e.target.checked) {
+      updatedList = [...checked, e.target.getAttribute('data-tags-zh')]
+      tagsListEN = [...checkedEN, e.target.getAttribute('data-tags-en')]
     } else {
-      updatedList.splice(checked.indexOf(event.target.value), 1)
-      tagsListEN.splice(checkedEN.indexOf(event.target.getAttribute('data-tags-en')), 1)
+      updatedList.splice(checked.indexOf(e.target.getAttribute('data-tags-zh')), 1)
+      tagsListEN.splice(checkedEN.indexOf(e.target.getAttribute('data-tags-en')), 1)
     }
     setChecked(updatedList)
     setCheckedEN(tagsListEN)
@@ -50,41 +30,10 @@ export default function Home() {
     : ''
   return (
     <div className=' min-h-screen '>
-      <div className='container flex flex-col align-middle justify-center mx-auto py-16'>
+      <div className='wrapper flex flex-col align-middle justify-center mx-auto py-16'>
         <h1 className='text-2xl font-bold text-center mb-8 text-red-600'>JYC Tags Generator</h1>
-        <h2 className='text-xl text-red-600 my-4'>必选</h2>
-        {mustHaveTags.map((item, index) => (
-          <div key={index}>
-            <label>
-              <input
-                value={item.zh}
-                data-tags-en={item.en}
-                type='checkbox'
-                onChange={handleCheck}
-              />
-              <span>
-                {item.zh} / {item.en}
-              </span>
-            </label>
-          </div>
-        ))}
-        <h2 className='text-xl text-red-600 my-4'>商业装修相关</h2>
-
-        {tagsDB.map((item, index) => (
-          <div key={index}>
-            <label>
-              <input
-                value={item.zh}
-                data-tags-en={item.en}
-                type='checkbox'
-                onChange={handleCheck}
-              />
-              <span>
-                {item.zh} / {item.en}
-              </span>
-            </label>
-          </div>
-        ))}
+        <TagsList onChange={handleCheck} data-tags={mustHaveTags} title='必选' />
+        <TagsList onChange={handleCheck} data-tags={tagsDB} title='商业装修相关' />
         <button
           className='px-6 py-2 mt-3 font-semibold text-sm bg-red-300 text-black rounded-full shadow-sm w-fit hover:bg-red-400 '
           onClick={() => {
@@ -96,25 +45,44 @@ export default function Home() {
           Reset
         </button>
         <div className='mt-10'>{`tags: ${checkedItems}`}</div>
-
-        <button
-          className='px-6 py-2 mt-3 font-semibold text-sm bg-red-300 text-black rounded-full shadow-sm w-fit hover:bg-red-400 '
-          onClick={() => {
-            navigator.clipboard.writeText(checkedItems)
-          }}
-        >
-          Copy 中文tags
-        </button>
+        <CopyContentButton content={checkedItems} btn-text='Copy 中文tags' />
         <div className='mt-10'>{`tags: ${checkedItemsEN}`}</div>
-        <button
-          className='px-6 py-2 mt-3 font-semibold text-sm bg-red-300 text-black rounded-full shadow-sm w-fit hover:bg-red-400 '
-          onClick={() => {
-            navigator.clipboard.writeText(checkedItemsEN)
-          }}
-        >
-          Copy 英文tags
-        </button>
+        <CopyContentButton content={checkedItemsEN} btn-text='Copy 英文tags' />
       </div>
+    </div>
+  )
+}
+function CopyContentButton(props) {
+  return (
+    <button
+      className='px-6 py-2 mt-3 font-semibold text-sm bg-red-300 text-black rounded-full shadow-sm w-fit hover:bg-red-400 '
+      onClick={() => {
+        navigator.clipboard.writeText(props.content)
+      }}
+    >
+      {props['btn-text']}
+    </button>
+  )
+}
+function TagsList(props) {
+  return (
+    <div>
+      <h2 className='text-xl text-red-600 my-4'>{props.title}</h2>
+      {props['data-tags'].map((item, index) => (
+        <div key={index}>
+          <label>
+            <input
+              data-tags-zh={item.zh}
+              data-tags-en={item.en}
+              type='checkbox'
+              onChange={props.onChange}
+            />
+            <span>
+              {item.zh} / {item.en}
+            </span>
+          </label>
+        </div>
+      ))}
     </div>
   )
 }
