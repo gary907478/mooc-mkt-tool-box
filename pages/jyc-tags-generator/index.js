@@ -5,7 +5,6 @@ var _ = require('lodash')
 export default function JycTagsGenerator() {
   const [checked, setChecked] = useState([])
   const [checkedEN, setCheckedEN] = useState([])
-  console.log(checked)
   // Add/Remove checked item from list
   const handleCheck = (e) => {
     let tagsListZH = [...checked]
